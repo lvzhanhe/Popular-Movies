@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="error_message">
+        Oops, an error has occurred~
+    </string>
+    <string name="sort_popular">most popular</string>
+    <string name="sort_rate">highest rated</string>
+
+    <string name="label_popularity">Popularity:</string>
+    <string name="label_vote_average">Vote average:</string>
+    <string name="label_language">Language:</string>
+    <string name="label_genre">Genre:</string>
+</resources>
