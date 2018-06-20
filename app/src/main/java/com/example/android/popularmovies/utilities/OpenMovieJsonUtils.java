@@ -20,7 +20,6 @@ public class OpenMovieJsonUtils {
         final String ORIGINAL_LANGUAGE_LABEL = "original_language";
         final String ORIGINAL_TITLE_LABEL = "original_title";
         final String GENERE_IDS_LABEL = "genre_ids";
-        final String BACKDROP_PATH_LABEL = "backdrop_path";
         final String OVERVIEW_LABEL = "overview";
         final String RELEASE_DATE_LABEL = "release_date";
 
@@ -42,12 +41,11 @@ public class OpenMovieJsonUtils {
                 String original_language = movie.getString(ORIGINAL_LANGUAGE_LABEL);
                 String original_title = movie.getString(ORIGINAL_TITLE_LABEL);
                 String genre_ids = movie.getJSONArray(GENERE_IDS_LABEL).toString();
-                String backdrop_path = movie.getString(BACKDROP_PATH_LABEL);
                 String overview = movie.getString(OVERVIEW_LABEL);
                 String release_date = movie.getString(RELEASE_DATE_LABEL);
 
                 String[] result = {vote_count,id,vote_average,title,popularity,poster_path,original_language,
-                        original_title, genre_ids,backdrop_path,overview,release_date};
+                        original_title, genre_ids,"",overview,release_date};
                 result_list.add(result);
             }
             return result_list;

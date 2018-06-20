@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements
                 ArrayList<String[]> finalJsonMovieData = new ArrayList<String[]>();
 
                 try {
-                    for (int i = 0; i < 5; i++) {
-                        URL weatherRequestUrl = NetworkUtils.main_buildUrl(sort_method, Integer.toString(1));
+                    for (int i = 1; i < 5; i++) {
+                        URL weatherRequestUrl = NetworkUtils.main_buildUrl(sort_method, Integer.toString(i));
                         String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(weatherRequestUrl);
                         ArrayList<String[]> simpleJsonMovieData = OpenMovieJsonUtils
                                 .getSimpleMovieStringsFromJson(MainActivity.this, jsonMovieResponse);
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements
         if (id == R.id.action_sort_rate) {
             mMovieAdapter.setMovieData(null);
             Bundle bundleForLoader = new Bundle();
-            bundleForLoader.putString("sort_by", "rate");
+            bundleForLoader.putString("sort_by", "top_rated");
             getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, bundleForLoader, this);
             return true;
         }

@@ -14,25 +14,17 @@ public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
-    private static final String TMDB_BASE_URL = "https://api.themoviedb.org/3/discover/movie";
+    private static final String TMDB_BASE_URL = "https://api.themoviedb.org/3/movie/";
     private static final String ID_QUERY_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
     private static final String API_KEY = "265d1f71e67dd885bfb15ca37aa5e88d";
 
-    final static String SORT_BY_PARAM = "sort_by";
     final static String API_KEY_PARAM = "api_key";
     final static String PAGE_PARAM = "page";
-    private static String Sort_Method;
 
     public static URL main_buildUrl(String sortMethod, String page) {
 
-        if (sortMethod.equals("popular")) {
-            Sort_Method = "popularity.desc";
-        } else if (sortMethod.equals("rate")) {
-            Sort_Method = "vote_average.desc";
-        }
-        Uri builtUri = Uri.parse(TMDB_BASE_URL).buildUpon()
-                .appendQueryParameter(SORT_BY_PARAM, Sort_Method)
+        Uri builtUri = Uri.parse(TMDB_BASE_URL + sortMethod).buildUpon()
                 .appendQueryParameter(API_KEY_PARAM, API_KEY)
                 .appendQueryParameter(PAGE_PARAM, page)
                 .build();
