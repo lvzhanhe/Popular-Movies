@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
+<RelativeLayout
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-<android.support.constraint.ConstraintLayout
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DetailActivity">
@@ -124,5 +127,56 @@
         android:layout_marginTop="36dp"
         app:layout_constraintStart_toStartOf="@+id/posterImageView"
         app:layout_constraintTop_toBottomOf="@+id/posterImageView" />
+
+    <View
+        android:id="@+id/view_bar"
+        android:layout_width="375dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintStart_toStartOf="@+id/DetailTextView"
+        app:layout_constraintTop_toBottomOf="@+id/DetailTextView" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trailerRecyclerView"
+        android:layout_width="375dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/view_bar"
+        app:layout_constraintTop_toBottomOf="@+id/view_bar" />
+
+
+    <View
+        android:id="@+id/view_bar_2"
+        android:layout_width="375dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintStart_toStartOf="@+id/trailerRecyclerView"
+        app:layout_constraintTop_toBottomOf="@+id/trailerRecyclerView" />
+
+    <TextView
+        android:id="@+id/review_TextView"
+        android:layout_width="375dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
+        app:layout_constraintStart_toStartOf="@+id/view_bar_2"
+        app:layout_constraintTop_toBottomOf="@+id/view_bar_2" />
+
 </android.support.constraint.ConstraintLayout>
 </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="end|bottom"
+        android:tint="@android:color/white"
+        app:srcCompat="@android:drawable/btn_star_big_on"
+        android:layout_marginRight="11dp"
+        android:layout_alignParentRight="true" />
+</RelativeLayout>

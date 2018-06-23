@@ -1,6 +1,10 @@
 package com.example.android.popularmovies;
 
+import android.content.res.Configuration;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -8,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,9 +22,12 @@ import android.widget.TextView;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
+import com.example.android.popularmovies.database.AppDatabase;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.OpenMovieJsonUtils;
+import com.example.android.popularmovies.database.MovieEntry;
 
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.MovieAdapterOnClickHandler,
@@ -36,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements
     private static final int MOVIE_LOADER_ID = 0;
     private static final String DEFAULT_SORT_METHOD = "popular";
 
+    private AppDatabase mDb;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +56,11 @@ public class MainActivity extends AppCompatActivity implements
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
+        mDb = AppDatabase.getInstance(getApplicationContext());
+
+        int spanCount = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 4 : 2;
         StaggeredGridLayoutManager layoutManager
-                = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
         mMovieAdapter = new MovieAdapter(this);
@@ -82,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
                 ArrayList<String[]> finalJsonMovieData = new ArrayList<String[]>();
 
                 try {
-                    for (int i = 1; i < 5; i++) {
+                    for (int i = 1; i < 6; i++) {
                         URL weatherRequestUrl = NetworkUtils.main_buildUrl(sort_method, Integer.toString(i));
                         String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(weatherRequestUrl);
                         ArrayList<String[]> simpleJsonMovieData = OpenMovieJsonUtils
@@ -153,21 +167,54 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == R.id.action_sort_popular) {
-            mMovieAdapter.setMovieData(null);
-            Bundle bundleForLoader = new Bundle();
-            bundleForLoader.putString("sort_by", DEFAULT_SORT_METHOD);
-            getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, bundleForLoader, this);
+            loadPagePopular();
             return true;
         }
 
         if (id == R.id.action_sort_rate) {
-            mMovieAdapter.setMovieData(null);
-            Bundle bundleForLoader = new Bundle();
-            bundleForLoader.putString("sort_by", "top_rated");
-            getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, bundleForLoader, this);
+            loadPageRate();
+            return true;
+        }
+
+        if (id == R.id.action_my_favorite) {
+            loadPageFavorite();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void loadPagePopular() {
+        mMovieAdapter.setMovieData(null);
+        Bundle bundleForLoader = new Bundle();
+        bundleForLoader.putString("sort_by", DEFAULT_SORT_METHOD);
+        getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, bundleForLoader, this);
+    }
+
+    public void loadPageRate() {
+        mMovieAdapter.setMovieData(null);
+        Bundle bundleForLoader = new Bundle();
+        bundleForLoader.putString("sort_by", "top_rated");
+        getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, bundleForLoader, this);
+    }
+
+    public void loadPageFavorite() {
+        mMovieAdapter.setMovieData(null);
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getMovies().observe(this, new Observer<List<MovieEntry>>() {
+            @Override
+            public void onChanged(@Nullable List<MovieEntry> movieEntries) {
+                Log.d(TAG, "Receiving database update from LiveData");
+                ArrayList<String[]> favorite_data = new ArrayList<>();
+                for (int i = 0; i < movieEntries.size(); i++) {
+                    MovieEntry preFavorite = movieEntries.get(i);
+                    String[] favorite = {"",Integer.toString(preFavorite.getMovie_id()),"",preFavorite.getMovie_title(),"",
+                            preFavorite.getMovie_poster(), "","","","","",preFavorite.getMovie_release_date()};
+                    favorite_data.add(favorite);
+                }
+                mMovieAdapter.setMovieData(favorite_data);
+            }
+        });
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 }

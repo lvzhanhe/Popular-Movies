@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.utilities;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import com.example.android.popularmovies.Movie;
 
 public class OpenMovieJsonUtils {
-    public static ArrayList<String[]> getSimpleMovieStringsFromJson(Context context, String JsonStr){
+    public static ArrayList<String[]> getSimpleMovieStringsFromJson(Context context, String JsonStr) {
 
         final String VOTE_COUNT_LABEL = "vote_count";
         final String ID_LABEL = "id";
@@ -55,7 +56,7 @@ public class OpenMovieJsonUtils {
         }
     }
 
-    public static Movie getMovieDetailFromJson(Context context, String JsonStr){
+    public static Movie getMovieDetailFromJson(Context context, String JsonStr) {
         Movie result = new Movie();
         final String POSTER_BASE_PATH = "https://image.tmdb.org/t/p/w500";
 
@@ -97,5 +98,44 @@ public class OpenMovieJsonUtils {
         }
 
         return result;
+    }
+
+    public static ArrayList<String[]> getVideosFromJson(Context context, String JsonStr) {
+        ArrayList<String[]> results = new ArrayList<>();
+        try {
+            JSONObject videosJson = new JSONObject(JsonStr);
+            JSONArray videos_array = videosJson.getJSONArray("results");
+            for (int i = 0; i < videos_array.length(); i++) {
+                JSONObject entry = (JSONObject) videos_array.get(i);
+                String name = entry.getString("name");
+                String website = entry.getString("site");
+                String key = entry.getString("key");
+                String[] result = {name, key};
+                if (website.equals("YouTube")) {
+                    results.add(result);
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return results;
+    }
+
+    public static String getReviewFromJson(Context context, String JsonStr) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            JSONObject reviewJson = new JSONObject(JsonStr);
+            JSONArray review_array = reviewJson.getJSONArray("results");
+            for (int i = 0; i < review_array.length(); i++) {
+                JSONObject entry = (JSONObject) review_array.get(i);
+                sb.append("->REVIEWS BY " + entry.getString("author"));
+                sb.append(":\n");
+                sb.append(entry.getString("content"));
+                sb.append("\n\n\n");
+            }
+        } catch (Exception e) {
+
+        }
+        return sb.toString();
     }
 }
